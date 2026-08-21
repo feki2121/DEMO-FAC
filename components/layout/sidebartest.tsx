@@ -137,16 +137,16 @@ export function Sidebar() {
           : []),
       ],
     },
-    ...(userRole === "ADMIN" ? [{
-      title: "Paramètres",
-      icon: Settings,
-      children: [
-        { title: "Emplacements", href: "/emplacements" },
-        { title: "Véhicules", href: "/vehicules" },
-        { title: "Utilisateurs", href: "/utilisateurs" },
-        { title: "Chauffeurs", href: "/chauffeurs" },
-      ],
-    }] : []),
+    // ...(userRole === "ADMIN" ? [{
+    //   title: "Paramètres",
+    //   icon: Settings,
+    //   children: [
+    //     { title: "Emplacements", href: "/emplacements" },
+    //     { title: "Véhicules", href: "/vehicules" },
+    //     { title: "Utilisateurs", href: "/utilisateurs" },
+    //     { title: "Chauffeurs", href: "/chauffeurs" },
+    //   ],
+    // }] : []),
   ], [userRole]);
 
   useEffect(() => {

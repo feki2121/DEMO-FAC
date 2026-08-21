@@ -4,14 +4,14 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const hashedPassword = await bcrypt.hash("admin123", 10);
+  const hashedPassword = await bcrypt.hash("kf123", 10);
   
   const admin = await prisma.user.upsert({
     where: { phone: "44150151" },
     update: {},
     create: {
-      phone: "44150150",
-      email: "fekii@gmail.com",
+      phone: "44150151",
+      email: "kf@gmail.com",
       password: hashedPassword,
       nom: "Administrateur",
       role: "ADMIN",
@@ -19,7 +19,7 @@ async function main() {
   });
   
   console.log("✅ Admin créé:", admin.phone);
-  console.log("📝 Mot de passe: admin123");
+  console.log("📝 Mot de passe: kf123");
 }
 
 main()

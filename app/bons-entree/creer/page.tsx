@@ -1250,50 +1250,6 @@ export default function CreerBonEntreePage() {
                               </SelectContent>
                             </Select>
                           </div>
-
-                          {/* Champ pour l'image */}
-                          <div className="sm:col-span-2 space-y-2">
-                            <Label className="text-xs">Image du produit</Label>
-                            <div className="flex items-center gap-4">
-                              {productImage ? (
-                                <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
-                                  <Image
-                                    src={productImage}
-                                    alt="Aperçu produit"
-                                    fill
-                                    className="object-cover"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={removeImage}
-                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition">
-                                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <ImagePlus className="w-8 h-8 mb-2 text-muted-foreground" />
-                                    <p className="text-xs text-muted-foreground">Ajouter</p>
-                                  </div>
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleImageSelect}
-                                    disabled={isUploading}
-                                  />
-                                </label>
-                              )}
-                              {isUploading && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                  Upload en cours...
-                                </div>
-                              )}
-                            </div>
-                          </div>
                         </div>
 
 
