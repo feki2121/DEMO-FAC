@@ -9,16 +9,16 @@ export async function GET(
   try {
     // Attendre la résolution de params (Next.js 16)
     const { id } = await params;
-    
+
     console.log("Récupération inventaire ID:", id);
-    
+
     if (!id) {
       return NextResponse.json(
         { error: 'ID manquant' },
         { status: 400 }
       );
     }
-    
+
     const inventaire = await prisma.inventaire.findUnique({
       where: { id },
       include: {

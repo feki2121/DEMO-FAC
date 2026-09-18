@@ -89,11 +89,10 @@ export async function GET(req: NextRequest) {
 // POST créer un inventaire
 export async function POST(req: NextRequest) {
   try {
-
     const session = await getServerSession();
     if (!session) {
       return NextResponse.json(
-        { error: 'Non authentifié' },
+        { error: "Non authentifié" },
         { status: 401 }
       );
     }
@@ -106,79 +105,90 @@ export async function POST(req: NextRequest) {
           include: {
             vehicule: {
               include: {
-                home: true  // Inclure le home associé au véhicule
-              }
-            }
-          }
-        }
-      }
+                home: true, // Inclure le home associé au véhicule
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Utilisateur non trouvé' },
+        { error: "Utilisateur non trouvé" },
         { status: 404 }
       );
     }
 
     const body = await req.json();
-
-
-    const { dateDebut, dateFin, description, homes, homeId: bodyHomeId, } = body;
+    const { dateDebut, dateFin, description, homes, homeId: bodyHomeId } = body;
 
     let finalHomeId = bodyHomeId;
 
     // Si l'utilisateur est CHAUFFEUR, forcer le homeId de son véhicule
-    if (user.role === 'CHAUFFEUR') {
+    if (user.role === "CHAUFFEUR") {
       if (!user.chauffeur?.vehicule?.homeId) {
         return NextResponse.json(
-          { error: 'Vous n\'êtes pas assigné à un véhicule avec un emplacement valide' },
+          {
+            error:
+              "Vous n'êtes pas assigné à un véhicule avec un emplacement valide",
+          },
           { status: 400 }
         );
       }
       finalHomeId = user.chauffeur.vehicule.homeId;
-      console.log(`[API] Chauffeur détecté: ${user.nom} - Forçage du homeId à: ${finalHomeId}`);
+      console.log(
+        `[API] Chauffeur détecté: ${user.nom} - Forçage du homeId à: ${finalHomeId}`
+      );
     }
+
     if (!homes || homes.length === 0) {
       return NextResponse.json(
-        { error: 'Au moins un entrepôt est requis' },
+        { error: "Au moins un entrepôt est requis" },
         { status: 400 }
       );
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      // Créer l'inventaire
+      // 1. Créer l'inventaire
       const inventaire = await tx.inventaire.create({
         data: {
           numero: `INV-${Date.now()}`,
-          chauffeurId: user.role === 'CHAUFFEUR' ? user.chauffeur?.id : null,
+          chauffeurId:
+            user.role === "CHAUFFEUR" ? user.chauffeur?.id : null,
           date: new Date(),
           dateDebut: new Date(dateDebut),
           dateFin: new Date(dateFin),
           description: description || null,
-          statut: 'EN_COURS',
+          statut: "EN_COURS",
         },
       });
 
-      // Pour chaque entrepôt sélectionné
+      // 2. Pour chaque entrepôt sélectionné
       for (const homeId of homes) {
-        // Récupérer tous les produits avec stock dans cet entrepôt
-        const stockLocations = await tx.stockLocation.findMany({
-          where: { homeId },
+        // 🔑 MODIFIÉ : On part des PRODUITS (et non plus des stockLocations)
+        //    afin d'inclure TOUS les produits, même ceux fraîchement créés
+        //    qui n'ont pas encore de StockLocation dans cet entrepôt.
+        const allProducts = await tx.product.findMany({
+          // where: { actif: true }, // ← décommente si tu as ce champ
           include: {
-            product: true,
-            home: true
+            stockLocations: {
+              where: { homeId }, // ← seulement le stock de CET entrepôt
+            },
           },
         });
 
-        // Créer une ligne d'inventaire pour chaque produit
-        for (const stock of stockLocations) {
+        // 🔑 MODIFIÉ : Créer une ligne d'inventaire pour CHAQUE produit
+        //    avec quantiteTheorique = 0 si le produit n'a pas de stock ici.
+        for (const product of allProducts) {
+          const quantiteTheorique = product.stockLocations[0]?.quantite ?? 0;
+
           await tx.ligneInventaire.create({
             data: {
               inventaireId: inventaire.id,
-              productId: stock.productId,
+              productId: product.id,
               homeId: homeId,
-              quantiteTheorique: stock.quantite,
+              quantiteTheorique,
               quantitePhysique: 0,
               ecart: 0,
             },
@@ -186,14 +196,14 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Retourner l'inventaire avec ses relations
+      // 3. Retourner l'inventaire avec ses relations
       return await tx.inventaire.findUnique({
         where: { id: inventaire.id },
         include: {
           lignes: {
             include: {
               product: true,
-              home: true
+              home: true,
             },
           },
         },
@@ -202,7 +212,7 @@ export async function POST(req: NextRequest) {
 
     // Enrichir la réponse avec les homes
     const homesMap = new Map();
-    result?.lignes.forEach(ligne => {
+    result?.lignes.forEach((ligne) => {
       if (ligne.home && !homesMap.has(ligne.home.id)) {
         homesMap.set(ligne.home.id, ligne.home);
       }
@@ -216,8 +226,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(responseData, { status: 201 });
   } catch (error) {
-    console.error('Error creating inventaire:', error);
-    return NextResponse.json({ error: 'Failed to create inventaire' }, { status: 500 });
+    console.error("Error creating inventaire:", error);
+    return NextResponse.json(
+      { error: "Failed to create inventaire", details: String(error) },
+      { status: 500 }
+    );
   }
 }
 

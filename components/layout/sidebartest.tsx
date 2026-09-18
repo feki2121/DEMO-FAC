@@ -66,6 +66,11 @@ export function Sidebar() {
 
   const navigation = useMemo<NavItem[]>(() => [
     {
+      title: "POS",
+      href: "/pos",
+      icon: Store
+    },
+    {
       title: "Tableau de bord",
       href: "/",
       icon: LayoutDashboard,
@@ -117,13 +122,13 @@ export function Sidebar() {
         { title: "Inventaires", href: "/inventaires" },
       ],
     },
-    {
-      title: "Logistique",
-      icon: Truck,
-      children: [
-        { title: "Tournée", href: "/tournees" },
-      ],
-    },
+    // {
+    //   title: "Logistique",
+    //   icon: Truck,
+    //   children: [
+    //     { title: "Tournée", href: "/tournees" },
+    //   ],
+    // },
     {
       title: "Finances",
       icon: Landmark,
@@ -137,16 +142,16 @@ export function Sidebar() {
           : []),
       ],
     },
-    // ...(userRole === "ADMIN" ? [{
-    //   title: "Paramètres",
-    //   icon: Settings,
-    //   children: [
-    //     { title: "Emplacements", href: "/emplacements" },
-    //     { title: "Véhicules", href: "/vehicules" },
-    //     { title: "Utilisateurs", href: "/utilisateurs" },
-    //     { title: "Chauffeurs", href: "/chauffeurs" },
-    //   ],
-    // }] : []),
+    ...(userRole === "ADMIN" ? [{
+      title: "Paramètres",
+      icon: Settings,
+      children: [
+        { title: "Emplacements", href: "/emplacements" },
+        { title: "Véhicules", href: "/vehicules" },
+        { title: "Utilisateurs", href: "/utilisateurs" },
+        { title: "Chauffeurs", href: "/chauffeurs" },
+      ],
+    }] : []),
   ], [userRole]);
 
   useEffect(() => {
@@ -228,7 +233,7 @@ export function Sidebar() {
           "flex h-[4.5rem] items-center border-b border-sidebar-border/80",
           !isMobile && isCollapsed ? "justify-center px-2" : "gap-3 px-4"
         )}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground shadow-[0_5px_14px_rgba(0,0,0,0.18)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground shadow-[0_5px_14px_rgba(0,0,0,0.18)]">
             <Store className="h-5 w-5" />
           </div>
           {(!isMobile && !isCollapsed) && (

@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(
   req: NextRequest,
@@ -9,7 +9,7 @@ export async function POST(
     // Déballer params (Next.js 16)
     const resolvedParams = await params;
     const inventaireId = resolvedParams.id;
-    
+
     const body = await req.json();
     const { ajusterStock } = body;
 
@@ -30,7 +30,7 @@ export async function POST(
       });
 
       if (!inventaire) {
-        throw new Error('Inventaire non trouvé');
+        throw new Error("Inventaire non trouvé");
       }
 
       // Vérifier que toutes les lignes ont été comptées
@@ -42,8 +42,31 @@ export async function POST(
       // Si demandé, ajuster le stock selon les écarts
       if (ajusterStock) {
         for (const ligne of inventaire.lignes) {
-          if (ligne.ecart !== 0) {
-            // Mettre à jour StockLocation
+          if (ligne.ecart === 0) continue;
+
+          // 🔑 SÉCURITÉ : on a besoin d'un homeId pour créer/mettre à jour une StockLocation
+          if (!ligne.homeId) {
+            console.warn(
+              `[valider] Ligne ${ligne.id} sans homeId — ajustement ignoré`
+            );
+            continue;
+          }
+
+          // 🔑 FIX P2025 : upsert au lieu de update
+          //   → si la StockLocation n'existe pas (produit fraîchement créé
+          //     jamais affecté à cet entrepôt), elle est créée.
+          //   → sinon, elle est incrémentée de l'écart.
+          const existingSL = await tx.stockLocation.findUnique({
+            where: {
+              productId_homeId: {
+                productId: ligne.productId,
+                homeId: ligne.homeId,
+              },
+            },
+          });
+
+          if (existingSL) {
+            // La ligne existe déjà → on incrémente normalement
             await tx.stockLocation.update({
               where: {
                 productId_homeId: {
@@ -55,57 +78,68 @@ export async function POST(
                 quantite: { increment: ligne.ecart },
               },
             });
-
-            // Mettre à jour la quantité globale du produit
-            await tx.product.update({
-              where: { id: ligne.productId },
-              data: {
-                quantiteStock: { increment: ligne.ecart },
-              },
-            });
-
-            // Créer un mouvement de stock pour l'ajustement
-            await tx.stockMovement.create({
+          } else {
+            // La ligne n'existe pas → on la crée avec la quantité comptée
+            // (on prend max(0, quantitePhysique) pour éviter les négatifs)
+            await tx.stockLocation.create({
               data: {
                 productId: ligne.productId,
-                type: ligne.ecart > 0 ? 'ENTREE' : 'SORTIE',
-                quantite: Math.abs(ligne.ecart),
-                motif: `Ajustement inventaire ${inventaire.numero} - Écart: ${ligne.ecart > 0 ? 'Surplus' : 'Manquant'}`,
-                date: new Date(),
+                homeId: ligne.homeId,
+                quantite: Math.max(0, ligne.quantitePhysique),
               },
             });
+          }
 
-            // Mettre à jour StockParType (type AUCUN pour les ajustements)
-            const stockParType = await tx.stockParType.findUnique({
+          // Mettre à jour la quantité globale du produit
+          await tx.product.update({
+            where: { id: ligne.productId },
+            data: {
+              quantiteStock: { increment: ligne.ecart },
+            },
+          });
+
+          // Créer un mouvement de stock pour l'ajustement
+          await tx.stockMovement.create({
+            data: {
+              productId: ligne.productId,
+              type: ligne.ecart > 0 ? "ENTREE" : "SORTIE",
+              quantite: Math.abs(ligne.ecart),
+              motif: `Ajustement inventaire ${inventaire.numero} - Écart: ${ligne.ecart > 0 ? "Surplus" : "Manquant"
+                }`,
+              date: new Date(),
+            },
+          });
+
+          // Mettre à jour StockParType (type AUCUN pour les ajustements)
+          const stockParType = await tx.stockParType.findUnique({
+            where: {
+              productId_typeBE: {
+                productId: ligne.productId,
+                typeBE: "AUCUN",
+              },
+            },
+          });
+
+          if (stockParType) {
+            await tx.stockParType.update({
               where: {
                 productId_typeBE: {
                   productId: ligne.productId,
-                  typeBE: 'AUCUN',
+                  typeBE: "AUCUN",
                 },
               },
+              data: {
+                quantite: { increment: ligne.ecart },
+              },
             });
-
-            if (stockParType) {
-              await tx.stockParType.update({
-                where: {
-                  productId_typeBE: {
-                    productId: ligne.productId,
-                    typeBE: 'AUCUN',
-                  },
-                },
-                data: {
-                  quantite: { increment: ligne.ecart },
-                },
-              });
-            } else if (ligne.ecart > 0) {
-              await tx.stockParType.create({
-                data: {
-                  productId: ligne.productId,
-                  typeBE: 'AUCUN',
-                  quantite: ligne.ecart,
-                },
-              });
-            }
+          } else if (ligne.ecart > 0) {
+            await tx.stockParType.create({
+              data: {
+                productId: ligne.productId,
+                typeBE: "AUCUN",
+                quantite: ligne.ecart,
+              },
+            });
           }
         }
       }
@@ -114,9 +148,9 @@ export async function POST(
       const updatedInventaire = await tx.inventaire.update({
         where: { id: inventaireId },
         data: {
-          statut: 'VALIDE',
+          statut: "VALIDE",
           dateValidation: new Date(),
-          validePar: 'system', // À remplacer par l'utilisateur connecté
+          validePar: "system", // À remplacer par l'utilisateur connecté
         },
         include: {
           lignes: {
@@ -133,15 +167,20 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: ajusterStock 
-        ? "Inventaire validé et stock ajusté automatiquement" 
+      message: ajusterStock
+        ? "Inventaire validé et stock ajusté automatiquement"
         : "Inventaire validé (stock non ajusté)",
       inventaire: result,
     });
   } catch (error) {
-    console.error('Error validating inventaire:', error);
+    console.error("Error validating inventaire:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to validate inventaire' },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to validate inventaire",
+      },
       { status: 500 }
     );
   }
