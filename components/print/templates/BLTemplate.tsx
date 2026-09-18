@@ -10,10 +10,10 @@ interface BLTemplateProps {
 }
 
 const DEFAULT_COMPANY = {
-    name: "KALLAL TECH COMPANY",
-    address: "01. Teniour chihia 3000 - SFAX",
+    name: "KF SOLUTIONS",
+    address: "Rte Tunis km 4.5 -  SFAX",
     phone: "25 535 035",
-    vat: "1860077 Q/A/M/000",
+    vat: "XXXXXXXXXXXXXXXX",
 };
 
 // Styles pour l'impression ticket (texte en gras)
@@ -191,7 +191,7 @@ export const BLTemplate: React.FC<BLTemplateProps> = ({
                 <div className="header-row">
                     <div className="logo-cell">
                         <img
-                            src="/ktc.png"
+                            src="/kf.jpg"
                             alt="Logo"
                             className="logo-img"
                             onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
@@ -349,7 +349,7 @@ export const BLTemplate: React.FC<BLTemplateProps> = ({
             <div className="header">
                 <div className="logo-container">
                     <img
-                        src="/ktc.png"
+                        src="/kf.jpg"
                         alt="Logo"
                         className="logo-img"
                         onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}

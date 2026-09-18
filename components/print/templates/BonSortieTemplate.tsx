@@ -9,10 +9,10 @@ interface BonSortieTemplateProps {
 }
 
 const DEFAULT_COMPANY = {
-  name: "KALLAL TECH COMPANY",
-  address: "01. Teniour chihia 3000 - SFAX",
+  name: "KF SOLUTIONS",
+  address: "Rte Tunis km 4.5 -  SFAX",
   phone: "25 535 035",
-  vat: "1860077 Q/A/M/000",
+  vat: "XXXXXXXXXXXXXXXX",
 };
 
 const getMotifLabel = (motif: string): string => {
@@ -46,10 +46,10 @@ export const BonSortieTemplate: React.FC<BonSortieTemplateProps> = ({
       {/* En-tête style AYSUD */}
       <div className="header">
         <div className="logo-container">
-          <img 
-            src="/ktc.png" 
-            alt="Logo" 
-            className="logo-img" 
+          <img
+            src="/kf.jpg"
+            alt="Logo"
+            className="logo-img"
             onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
           />
         </div>
@@ -133,13 +133,13 @@ export const BonSortieTemplate: React.FC<BonSortieTemplateProps> = ({
                 <>
                   <td className="text-right">
                     {ligne.prixUnitaireHT.toFixed(3)}
-                   </td>
+                  </td>
                   <td className="text-right">
                     {ligne.prixUnitaireTTC.toFixed(3)}
-                   </td>
+                  </td>
                   <td className="text-right">
                     {(ligne.quantite * ligne.prixUnitaireHT).toFixed(3)}
-                   </td>
+                  </td>
                 </>
               )}
             </tr>
@@ -180,7 +180,7 @@ export const BonSortieTemplate: React.FC<BonSortieTemplateProps> = ({
           </div>
           <div className="signature-block">
             <div className="signature-line"></div>
-            <div className="signature-label">Pour KALLAL TECH COMPANY</div>
+            <div className="signature-label">Pour KF SOLUTIONS</div>
           </div>
         </div>
       )}

@@ -411,7 +411,7 @@ export default function BonsSortiePage() {
         <!-- LEFT LOGO -->
         <div class="header-left">
           <img 
-            src="ktc.png" 
+            src="kf.jpg" 
             class="logo"
             onerror="this.style.display='none'"
           />
@@ -431,7 +431,7 @@ export default function BonsSortiePage() {
         <!-- RIGHT COMPANY -->
         <div class="header-right">
           <div class="company-name">
-            KALLAL TECH COMPANY
+            KF SOLUTIONS
           </div>
 
           <div class="company-details">
@@ -439,7 +439,7 @@ export default function BonsSortiePage() {
           </div>
 
           <div class="company-details">
-            01. Teniour chihia 3000 - SFAX
+            Rte Tunis km 4.5 -  SFAX
           </div>
 
           <div class="company-details">
@@ -447,7 +447,7 @@ export default function BonsSortiePage() {
           </div>
 
           <div class="company-details">
-            TVA : 1860077 Q/A/M/000
+            TVA : XXXXXXXXXXXXXXXX
           </div>
         </div>
 
@@ -545,7 +545,7 @@ export default function BonsSortiePage() {
 
         <div class="signature-box">
           <div class="signature-line">
-            Pour KALLAL TECH COMPANY
+            Pour KF SOLUTIONS
           </div>
         </div>
 

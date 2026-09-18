@@ -32,11 +32,11 @@ interface CatalogueTemplateTestProps {
 }
 
 const DEFAULT_COMPANY = {
-  name: "KALLAL TECH COMPANY",
-  address: "01. Teniour chihia 3000 - SFAX",
+  name: "KF SOLUTIONS",
+  address: "Rte Tunis km 4.5 -  SFAX",
   phone: "25 535 035",
   email: "kallel@gmail.com",
-  vat: "1860077 Q/A/M/000",
+  vat: "XXXXXXXXXXXXXXXX",
 };
 
 const COLUMNS_PER_ROW = 4;
@@ -800,7 +800,7 @@ export const CatalogueTemplateTest: React.FC<CatalogueTemplateTestProps> = ({
                             <img
                               src={product.imageUrl}
                               alt={product.designation}
-                              decoding="async"  
+                              decoding="async"
                               crossOrigin="anonymous"
                               onError={(e) => {
                                 (e.target as HTMLImageElement).style.display = 'none';

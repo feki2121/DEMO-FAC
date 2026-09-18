@@ -73,7 +73,7 @@ export default function TransfertDetailPage() {
         throw new Error('Erreur lors du chargement');
       }
       const data = await response.json();
-      
+
       // Grouper les transferts par lot
       if (data.lotNumero || (data.transferts && data.transferts.length > 0)) {
         setTransfert(data);
@@ -119,10 +119,10 @@ export default function TransfertDetailPage() {
       return;
     }
 
-    const statutClass = transfert.statut === 'VALIDE' ? 'status-valide' : 
-                        transfert.statut === 'ANNULE' ? 'status-annule' : 'status-attente';
-    const statutText = transfert.statut === 'VALIDE' ? 'Validé' : 
-                       transfert.statut === 'ANNULE' ? 'Annulé' : 'En attente';
+    const statutClass = transfert.statut === 'VALIDE' ? 'status-valide' :
+      transfert.statut === 'ANNULE' ? 'status-annule' : 'status-attente';
+    const statutText = transfert.statut === 'VALIDE' ? 'Validé' :
+      transfert.statut === 'ANNULE' ? 'Annulé' : 'En attente';
 
     const htmlContent = `
     <!DOCTYPE html>
@@ -168,7 +168,7 @@ export default function TransfertDetailPage() {
       <div class="print-container">
         <div class="header">
           <div class="company-name">KF SOLUTIONS</div>
-          <div class="company-details">01. Teniour chihia 3000 - SFAX | Tél: 25 535 035 | MF: 1860077 Q/A/M/000</div>
+          <div class="company-details">Rte Tunis km 4.5 -  SFAX | Tél: 25 535 035 | MF: XXXXXXXXXXXXXXXX</div>
           <div class="title">BON DE TRANSFERT DE STOCK</div>
           <div class="subtitle">Document de suivi des mouvements entre emplacements</div>
         </div>
@@ -438,7 +438,7 @@ export default function TransfertDetailPage() {
                     </tfoot> */}
                   </table>
                 </div>
-                
+
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg flex justify-between items-center">
                   <span className="font-medium">Quantité totale transférée :</span>
                   <Badge variant="outline" className="bg-blue-100 text-blue-800 px-3 py-1">

@@ -9,10 +9,10 @@ interface DevisTemplateProps {
 }
 
 const DEFAULT_COMPANY = {
-  name: "KALLAL TECH COMPANY",
-  address: "01. Teniour chihia 3000 - SFAX",
+  name: "KF SOLUTIONS",
+  address: "Rte Tunis km 4.5 -  SFAX",
   phone: "25 535 035",
-  vat: "1860077 Q/A/M/000",
+  vat: "XXXXXXXXXXXXXXXX",
 };
 
 export const DevisTemplate: React.FC<DevisTemplateProps> = ({
@@ -30,11 +30,11 @@ export const DevisTemplate: React.FC<DevisTemplateProps> = ({
   }).replace(/\//g, ' / ');
 
   // Calcul du total HT avant remise pour affichage
-  const totalHTBrut = data.lignes.reduce((sum, l) => 
+  const totalHTBrut = data.lignes.reduce((sum, l) =>
     sum + (l.quantite * (l.prixUnitaireHT || (l.prixUnitaire / (1 + (l.product?.tva || 19) / 100)))), 0
   );
-  
-  const totalTTCBrut = data.lignes.reduce((sum, l) => 
+
+  const totalTTCBrut = data.lignes.reduce((sum, l) =>
     sum + (l.quantite * l.prixUnitaire), 0
   );
 
@@ -61,10 +61,10 @@ export const DevisTemplate: React.FC<DevisTemplateProps> = ({
       {/* En-tête style AYSUD */}
       <div className="header">
         <div className="logo-container">
-          <img 
-            src="/ktc.png" 
-            alt="Logo" 
-            className="logo-img" 
+          <img
+            src="/kf.jpg"
+            alt="Logo"
+            className="logo-img"
             onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
           />
         </div>
@@ -138,7 +138,7 @@ export const DevisTemplate: React.FC<DevisTemplateProps> = ({
       {/* Totaux */}
       <div className={`totals-container ${isTicket ? "ticket" : ""}`}>
         <div className={`totals-table ${isTicket ? "ticket" : ""}`}>
-          
+
           {/* Affichage des sous-totaux si remise */}
           {hasRemise && !isTicket && (
             <>
@@ -189,7 +189,7 @@ export const DevisTemplate: React.FC<DevisTemplateProps> = ({
           </div>
           <div className="signature-block">
             <div className="signature-line"></div>
-            <div className="signature-label">Pour KALLAL TECH COMPANY</div>
+            <div className="signature-label">Pour KF SOLUTIONS</div>
           </div>
         </div>
       )}

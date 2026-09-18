@@ -2,11 +2,11 @@ import React from "react";
 import { PrintHeaderProps } from "@/types/print";
 
 const DEFAULT_COMPANY = {
-  name: "KALLAL TECH COMPANY",
-  address: "01. Teniour chihia 3000 - SFAX",
+  name: "KF SOLUTIONS",
+  address: "Rte Tunis km 4.5 -  SFAX",
   phone: "25 535 035",
-  vat: "1860077 Q/A/M/000",
-  logo: "ktc.png",
+  vat: "XXXXXXXXXXXXXXXX",
+  logo: "kf.jpg",
 };
 
 export const PrintHeader: React.FC<PrintHeaderProps> = ({
