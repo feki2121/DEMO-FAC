@@ -27,3 +27,8 @@ prisma/dev.db
 prisma/schema.dev.prisma
 
 guide
+
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+tsconfig.tsbuildinfo
